@@ -15,8 +15,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LogicalOperation" eSuperTypes="#//UserDefinedOperation">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//LOGICAL_OP"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="lhop" lowerBound="1" eType="#//CompareOperation"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="rhop" lowerBound="1" eType="#//CompareOperation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lhop" lowerBound="1" eType="#//UserDefinedOperation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rhop" lowerBound="1" eType="#//UserDefinedOperation"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MathOperation"/>
   <eClassifiers xsi:type="ecore:EClass" name="TraceValue"/>

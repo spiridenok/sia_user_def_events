@@ -1,0 +1,49 @@
+[comment encoding = UTF-8 /]
+[module generate('http://userdefevents/1.0')]
+
+[template public generateDNDM(aDNDM : DNDM)]
+  [comment @main /]
+	[file ('dspi.py', false, 'UTF-8')]
+		[for (var : DndmVariable | aDNDM.variables)]
+def trigger_func( 
+			[var.unique_id/]
+				):
+		[/for]
+		[for (trig : TriggerEvent | aDNDM.triggers)]
+			[let logical_ops : OrderedSet( LogicalOperation ) = trig.ops->select( oclIsTypeOf(LogicalOperation) ) ]
+			[let top_level_ops : OrderedSet( UserDefinedOperation ) = trig.ops->reject( e|logical_ops.lhop->union( logical_ops.rhop )->exists(o|o=e) ) ]
+			[for (op : UserDefinedOperation| top_level_ops)]
+				return [expression(op)/]
+			[/for]
+			[/let]
+			[/let]
+		[/for]		
+	[/file]
+	
+[/template]
+
+[template public expression(op : LogicalOperation)]
+[expression(op.lhop)/] [if (op.type = LOGICAL_OP::AND)] and [else] or [/if] [expression(rhop)/]
+[/template]
+
+[template public expression(op : CompareOperation)]	
+[trace_value(op.lhop)/] [if (op.type = COMPARE_OP::LESS_THAN)] < [else] > [/if] [trace_value(rhop)/]
+[/template]
+
+[template public expression(op : UserDefinedOperation)]
+# Can not resolve user defined operation
+assert False
+[/template]
+
+[template public trace_value(val : ActualTraceValue)]
+[val.refers_to.unique_id/]
+[/template]
+
+[template public trace_value(val : ConstValue)]
+[val.value/]
+[/template]
+
+[template public trace_value(val : TraceValue)]
+# Can not resolve trace value
+assert False
+[/template]

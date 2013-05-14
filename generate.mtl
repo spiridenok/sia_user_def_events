@@ -2,8 +2,9 @@
 [module generate('http://userdefevents/1.0')]
 
 [template public generateDNDM(aDNDM : DNDM)]
-  [comment @main /]
-	[file ('dspi.py', false, 'UTF-8')]
+	[comment @main /]
+	[file (aDNDM.name + '.py', false, 'UTF-8')]
+# From model [aDNDM.name/]
 		[for (var : DndmVariable | aDNDM.variables)]
 def trigger_func( 
 			[var.unique_id/]

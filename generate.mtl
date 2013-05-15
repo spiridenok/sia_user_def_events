@@ -5,17 +5,15 @@
 	[comment @main /]
 	[file (aDNDM.name + '.py', false, 'UTF-8')]
 # From model [aDNDM.name/]
+# Total number of operations is [aDNDM.get_num_operations()/] and used entities ([for (it : String | aDNDM.get_num_entities()) separator (',')][it/][/for])
 		[let compare_ops : Sequence( CompareOperation ) = aDNDM.triggers.ops->select(e|e.oclIsTypeOf(CompareOperation)) ]
 		[if (compare_ops.lhop->union(compare_ops.rhop)->exists(e|e.oclIsTypeOf(Sqrt)))]
 import math
 		[/if]
 		[/let]
 
-def trigger_func( 
-		[for (var : DndmVariable | aDNDM.variables) separator (',')]
-			[var.unique_id/]
-		[/for]
-				):
+def trigger_func( [for (var : DndmVariable | aDNDM.variables) separator (',')][var.unique_id/][/for]
+		          [for (evt : DndmEvents | aDNDM.events) separator (',')][evt.unique_id/][/for] ):
 		[for (trig : TriggerEvent | aDNDM.triggers)]
 			[let logical_ops : OrderedSet( LogicalOperation ) = trig.ops->select( oclIsTypeOf(LogicalOperation) ) ]
 			[let top_level_ops : OrderedSet( UserDefinedOperation ) = trig.ops->reject( e|logical_ops.lhop->union( logical_ops.rhop )->exists(o|o=e) ) ]
@@ -35,6 +33,14 @@ def trigger_func(
 
 [template public expression(op : CompareOperation)]	
 ([trace_value(op.lhop)/])[if (op.type = COMPARE_OP::LESS_THAN)]< [else] > [/if]([trace_value(rhop)/])
+[/template]
+
+[template public expression(op : EventOperationOr)]	
+[for (event : DndmEvents | op.ops) separator (' or ')][event.unique_id/][/for]
+[/template]
+
+[template public expression(op : EventOperationAnd)]	
+[for (event : DndmEvents | op.ops) separator (' and ')][event.unique_id/][/for]
 [/template]
 
 [template public expression(op : UserDefinedOperation)]
@@ -74,3 +80,18 @@ assert False
 [template public trace_value(val : Sqrt)]
 math.sqrt([trace_value(lhop)/]) 
 [/template]
+
+[query public get_num_operations(dndm : DNDM) : Integer = 
+	let num_events : Integer = self.eAllContents(EventOperation).ops->size() in 
+    let num_ops : Integer = self.eAllContents(UserDefinedOperation)->reject(e|e.oclIsKindOf(EventOperation))->size() in
+    let num_math_ops : Integer = self.eAllContents(MathValue)->size() in
+    let num_abs_ops : Integer = self.eAllContents(AbsoluteTraceValue)->size() in
+		num_events - 1 + num_ops + num_math_ops + num_abs_ops
+/]
+
+[query public get_num_entities(dndm : DNDM) : Set( String ) = 
+	let events : Set( String ) = self.eAllContents(EventOperation).ops.unique_id->asSet() in
+    let vars : Set( String ) = self.eAllContents(ActualTraceValue).refers_to.unique_id->asSet() in
+    let abs_vars : Set( String ) = self.eAllContents(AbsoluteTraceValue).refers_to.unique_id->asSet() in
+		events->union(vars)->union(abs_vars)->asSet()
+/]

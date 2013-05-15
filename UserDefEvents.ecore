@@ -14,12 +14,15 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//COMPARE_OP"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LogicalOperation" eSuperTypes="#//UserDefinedOperation">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//LOGICAL_OP"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="lhop" lowerBound="1" eType="#//UserDefinedOperation"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="rhop" lowerBound="1" eType="#//UserDefinedOperation"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//LOGICAL_OP"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MathOperation"/>
-  <eClassifiers xsi:type="ecore:EClass" name="TraceValue"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MathValue" abstract="true" eSuperTypes="#//TraceValue">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lhop" lowerBound="1" eType="#//TraceValue"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rhop" lowerBound="1" eType="#//TraceValue"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TraceValue" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="ActualTraceValue" eSuperTypes="#//TraceValue">
     <eStructuralFeatures xsi:type="ecore:EReference" name="refers_to" lowerBound="1"
         eType="#//DndmVariable"/>
@@ -51,4 +54,9 @@
         eType="#//TraceValue" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Addition" eSuperTypes="#//TraceValue #//MathValue"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Subtraction" eSuperTypes="#//MathValue #//TraceValue"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Division" eSuperTypes="#//MathValue"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Multiplication" eSuperTypes="#//MathValue"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Sqrt" eSuperTypes="#//MathValue"/>
 </ecore:EPackage>
